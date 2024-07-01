@@ -1,5 +1,6 @@
 import { Inter, Outfit } from "next/font/google";
 import "./globals.css";
+import NavBar from "./components/NavBar";
 
 const outfit = Outfit({ subsets: ["latin"] });
 
@@ -11,7 +12,10 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className={outfit.className + ' ' + 'lg:block hidden'}>{children}</body>
+      <body className={outfit.className + ' ' + 'lg:flex lg:flex-col hidden'}>
+        <NavBar />
+        {children}
+        </body>
     </html>
   );
 }

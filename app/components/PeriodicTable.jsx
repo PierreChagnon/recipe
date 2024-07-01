@@ -125,7 +125,7 @@ const PeriodicTable = () => {
 
             {renderFilterButtons()}
 
-            <div className="grid grid-cols-6 gap-4 border p-4 rounded-lg shadow-md">
+            <div className="grid grid-cols-6 gap-4 p-4 rounded-lg">
                 {elementsDisplayed.map((element) => (
                     <div
                         key={element.name}
