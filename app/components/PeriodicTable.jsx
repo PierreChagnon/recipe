@@ -1,5 +1,7 @@
 'use client'
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { collection, getDocs } from 'firebase/firestore';
+import { db } from '@/firebase/firebase';
 
 const elements = [
     { name: 'Motivational', description: 'Motivational mechanisms', group: 'group1' },
@@ -65,10 +67,24 @@ const getElementClass = (group) => {
 };
 
 
-
 const PeriodicTable = () => {
     const [selectedElement, setSelectedElement] = useState(null);
     const [elementsDisplayed, setElementsDisplayed] = useState(elements);
+
+    const [mechanisms, setMechanisms] = useState([]);
+
+    useEffect(() => {
+        const fetchMechanisms = async () => {
+            const mechanismsCollection = collection(db, 'mechanisms');
+            const mechanismsSnapshot = await getDocs(mechanismsCollection);
+            const mechanismsList = mechanismsSnapshot.docs.map((doc) => doc.data());
+            console.log('mechanislsList', mechanismsList);
+            setMechanisms(mechanismsList);
+        };
+
+        fetchMechanisms();
+    }, [])
+
 
     const renderFilterButtons = () => {
         return (
@@ -126,14 +142,14 @@ const PeriodicTable = () => {
             {renderFilterButtons()}
 
             <div className="grid grid-cols-6 gap-4 p-4 rounded-lg">
-                {elementsDisplayed.map((element) => (
+                {mechanisms.map((element) => (
                     <div
-                        key={element.name}
-                        className={`flex flex-col items-center justify-center p-4 rounded-lg cursor-pointer shadow-sm hover:shadow-md hover:scale-105 duration-100 ${getElementClass(element.group)}`}
+                        key={element.cognitive_mechanism}
+                        className={`flex flex-col items-center justify-center p-4 rounded-lg cursor-pointer shadow-sm hover:shadow-md hover:scale-105 duration-100 bg-blue-200`}
                         onClick={() => handleElementClick(element)}
                     >
-                        <h2 className="text-xl font-bold">{element.name}</h2>
-                        <p className="text-sm truncate">{element.description}</p>
+                        <h2 className="text-xl font-bold">{element.cognitive_mechanism}</h2>
+                        <p className="text-sm truncate">{element.general_adaptive_challenge}</p>
                     </div>
                 ))}
             </div>
@@ -156,8 +172,8 @@ const PeriodicTable = () => {
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                         </svg>
                     </button>
-                    <h2 className="text-2xl font-bold">{selectedElement.name}</h2>
-                    <p className="text-sm">{selectedElement.description}</p>
+                    <h2 className="text-2xl font-bold">{selectedElement.cognitive_mechanism}</h2>
+                    <p className="text-sm">{selectedElement.summary_mechanism}</p>
                     {/* Ajoutez plus d'informations ici */}
                 </div>
             )}

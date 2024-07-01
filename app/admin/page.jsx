@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 import { storage, db } from '@/firebase/firebase'
 import { ref, uploadBytes } from 'firebase/storage'
 import Papa from 'papaparse'
-import { writeBatch, doc } from 'firebase/firestore'
+import { writeBatch, doc, collection, getDocs } from 'firebase/firestore'
 
 
 export default function Admin() {
@@ -22,12 +22,30 @@ export default function Admin() {
         }
     }
 
+    const clearCollection = async () => {
+        console.log('Clearing collection')
+        const querySnapshot = await getDocs(collection(db, "mechanisms"));
+        console.log('querySnapshot', querySnapshot)
+
+        const batch = writeBatch(db);
+
+        querySnapshot.forEach((doc) => {
+            batch.delete(doc.ref);
+        });
+
+        await batch.commit();
+    }
+
 
     const processCSV = async (file) => {
         Papa.parse(file, {
             header: true,
             complete: async (result) => {
                 console.log('Parsed CSV', result)
+
+                // Suppression des données existantes
+                await clearCollection()
+
                 // Création du batch
                 const batch = writeBatch(db)
                 result.data.forEach((row) => {
@@ -42,6 +60,7 @@ export default function Admin() {
                 } catch (error) {
                     console.error('Error updating Firestore:', error);
                 }
+
             },
             error: (error) => {
                 console.error('Error parsing CSV', error)
