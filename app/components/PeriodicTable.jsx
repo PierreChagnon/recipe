@@ -21,6 +21,27 @@ const PeriodicTable = () => {
         fetchMechanisms();
     }, [])
 
+    const renderBibliography = (element) => {
+        const refs = [];
+        for (let i = 1; i <= 15; i++) {
+            const refKey = `ref_${i}`;
+            const lienKey = `lien_ref_${i}`;
+            if (element[refKey] && element[lienKey]) {
+                refs.push({ ref: element[refKey], lien: element[lienKey] });
+            }
+        }
+        return (
+            <ul className='flex flex-col gap-4'>
+                {refs.map((ref, index) => (
+                    <li key={index}>
+                        <a href={ref.lien} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">
+                            {ref.ref}
+                        </a>
+                    </li>
+                ))}
+            </ul>
+        );
+    };
 
     const renderFilterButtons = () => {
         return (
@@ -84,8 +105,8 @@ const PeriodicTable = () => {
                         className={`flex flex-col items-center justify-center p-4 rounded-lg cursor-pointer shadow-sm hover:shadow-md hover:scale-105 duration-100 bg-blue-200`}
                         onClick={() => handleElementClick(element)}
                     >
-                        <h2 className="text-xl font-bold">{element.cognitive_mechanism}</h2>
-                        <p className="text-sm truncate">{element.general_adaptive_challenge}</p> {/* specific_adaptive_challenge */}
+                        <h2 className="text-xl text-center font-bold">{element.cognitive_mechanism}</h2>
+                        <p className="text-sm truncate">{element.specific_adaptive_challenge}</p>
                     </div>
                 ))}
             </div>
@@ -93,7 +114,8 @@ const PeriodicTable = () => {
 
 
             {selectedElement && (
-                <div className="fixed left-0 top-0 h-dvh w-1/3 bg-white p-4 flex flex-col shadow-lg overflow-y-scroll">
+                <div className="fixed left-0 top-0 h-dvh w-1/3 bg-white p-4 gap-10 flex flex-col shadow-lg overflow-y-scroll">
+
                     <button
                         className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
                         onClick={() => setSelectedElement(null)}
@@ -108,9 +130,12 @@ const PeriodicTable = () => {
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                         </svg>
                     </button>
-                    <h2 className="text-2xl font-bold">{selectedElement.cognitive_mechanism}</h2>
-                    <p className="text-sm">{selectedElement.summary_mechanism}</p>
-                    <div className='flex flex-col'>
+
+                    <div className='flex flex-col gap-4'>
+                        <h2 className="text-2xl font-bold text-center">{selectedElement.cognitive_mechanism}</h2>
+                        <p className="">{selectedElement.summary_mechanism}</p>
+                    </div>
+                    <div className='flex flex-col gap-4 rounded-md border-2 px-2 py-4'>
                         <h3 className='text-2xl' >Cognition</h3>
                         <div className='flex'>
                             <p className='font-bold text-nowrap'>Adaptive challenge :</p>
@@ -169,7 +194,7 @@ const PeriodicTable = () => {
                             </tbody>
                         </table>
                     </div>
-                    <div className='flex flex-col'>
+                    <div className='flex flex-col gap-4 rounded-md border-2 px-2 py-4'>
                         <h3 className='text-2xl' >Fiction</h3>
                         <div className='flex'>
                             <p className='font-bold'>Description of the ingredient :</p>
@@ -179,19 +204,11 @@ const PeriodicTable = () => {
                             <p className='font-bold'>Example of the ingredient :</p>
                             <p>{selectedElement.example_ingredient}</p>
                         </div>
-                        <p>{selectedElement.summary_ingredient}</p>
+                        <p className=''>{selectedElement.summary_ingredient}</p>
                     </div>
-                    <div className='flex flex-col'>
+                    <div className='flex flex-col gap-4 rounded-md border-2 px-2 py-4'>
                         <h3 className='text-2xl' >Bibliography</h3>
-                        <div className='flex'>
-                            <p>Description of the ingredient</p>
-                            <p>{selectedElement.description_ingredient}</p>
-                        </div>
-                        <div className='flex'>
-                            <p>Example of the ingredient</p>
-                            <p>{selectedElement.example_ingredient}</p>
-                        </div>
-                        <p>{selectedElement.summary_ingredient}</p>
+                        {renderBibliography(selectedElement)}
                     </div>
                 </div>
             )}
