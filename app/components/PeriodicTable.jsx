@@ -3,73 +3,9 @@ import React, { useState, useEffect } from 'react';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '@/firebase/firebase';
 
-const elements = [
-    { name: 'Motivational', description: 'Motivational mechanisms', group: 'group1' },
-    { name: 'Conceptual', description: 'Conceptual mechanisms', group: 'group1' },
-    { name: 'Element1', description: 'Description1', group: 'group1' },
-    { name: 'Element2', description: 'Description2', group: 'group1' },
-    { name: 'Element3', description: 'Description3', group: 'group1' },
-    { name: 'Element4', description: 'Description4', group: 'group1' },
-    { name: 'Element5', description: 'Description5', group: 'group1' },
-    { name: 'Element6', description: 'Description6', group: 'group1' },
-    { name: 'Element7', description: 'Description7', group: 'group1' },
-    { name: 'Element8', description: 'Description8', group: 'group1' },
-    { name: 'Element9', description: 'Description9', group: 'group1' },
-    { name: 'Element10', description: 'Description10', group: 'group2' },
-    { name: 'Element11', description: 'Description11', group: 'group2' },
-    { name: 'Element12', description: 'Description12', group: 'group2' },
-    { name: 'Element13', description: 'Description13', group: 'group2' },
-    { name: 'Element14', description: 'Description14', group: 'group2' },
-    { name: 'Element15', description: 'Description15', group: 'group2' },
-    { name: 'Element16', description: 'Description16', group: 'group2' },
-    { name: 'Element17', description: 'Description17', group: 'group2' },
-    { name: 'Element18', description: 'Description18', group: 'group2' },
-    { name: 'Element19', description: 'Description19', group: 'group2' },
-    { name: 'Element20', description: 'Description20', group: 'group2' },
-    { name: 'Element21', description: 'Description21', group: 'group2' },
-    { name: 'Element22', description: 'Description22', group: 'group3' },
-    { name: 'Element23', description: 'Description23', group: 'group3' },
-    { name: 'Element24', description: 'Description24', group: 'group3' },
-    { name: 'Element25', description: 'Description25', group: 'group3' },
-    { name: 'Element26', description: 'Description26', group: 'group3' },
-    { name: 'Element27', description: 'Description27', group: 'group3' },
-    { name: 'Element28', description: 'Description28', group: 'group3' },
-    { name: 'Element29', description: 'Description29', group: 'group3' },
-    { name: 'Element30', description: 'Description30', group: 'group3' },
-    { name: 'Element31', description: 'Description31', group: 'group4' },
-    { name: 'Element32', description: 'Description32', group: 'group4' },
-    { name: 'Element33', description: 'Description33', group: 'group4' },
-    { name: 'Element34', description: 'Description34', group: 'group4' },
-    { name: 'Element35', description: 'Description35', group: 'group4' },
-    { name: 'Element36', description: 'Description36', group: 'group4' },
-    { name: 'Element37', description: 'Description37', group: 'group4' },
-    { name: 'Element38', description: 'Description38', group: 'group4' },
-    { name: 'Element39', description: 'Description39', group: 'group5' },
-    { name: 'Element40', description: 'Description40', group: 'group5' },
-];
-
-const getElementClass = (group) => {
-
-    switch (group) {
-        case 'group1':
-            return 'bg-blue-200';
-        case 'group2':
-            return 'bg-green-200';
-        case 'group3':
-            return 'bg-yellow-200';
-        case 'group4':
-            return 'bg-purple-200';
-        case 'group5':
-            return 'bg-red-200';
-        default:
-            return 'bg-gray-200';
-    }
-};
-
-
 const PeriodicTable = () => {
     const [selectedElement, setSelectedElement] = useState(null);
-    const [elementsDisplayed, setElementsDisplayed] = useState(elements);
+    const [elementsDisplayed, setElementsDisplayed] = useState();
 
     const [mechanisms, setMechanisms] = useState([]);
 
@@ -149,7 +85,7 @@ const PeriodicTable = () => {
                         onClick={() => handleElementClick(element)}
                     >
                         <h2 className="text-xl font-bold">{element.cognitive_mechanism}</h2>
-                        <p className="text-sm truncate">{element.general_adaptive_challenge}</p>
+                        <p className="text-sm truncate">{element.general_adaptive_challenge}</p> {/* specific_adaptive_challenge */}
                     </div>
                 ))}
             </div>
@@ -157,7 +93,7 @@ const PeriodicTable = () => {
 
 
             {selectedElement && (
-                <div className="fixed left-0 top-0 h-full w-1/4 bg-white p-4 shadow-lg">
+                <div className="fixed left-0 top-0 h-dvh w-1/3 bg-white p-4 flex flex-col shadow-lg overflow-y-scroll">
                     <button
                         className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
                         onClick={() => setSelectedElement(null)}
@@ -174,7 +110,89 @@ const PeriodicTable = () => {
                     </button>
                     <h2 className="text-2xl font-bold">{selectedElement.cognitive_mechanism}</h2>
                     <p className="text-sm">{selectedElement.summary_mechanism}</p>
-                    {/* Ajoutez plus d'informations ici */}
+                    <div className='flex flex-col'>
+                        <h3 className='text-2xl' >Cognition</h3>
+                        <div className='flex'>
+                            <p className='font-bold text-nowrap'>Adaptive challenge :</p>
+                            <p>{selectedElement.specific_adaptive_challenge}</p>
+                        </div>
+                        <p>{selectedElement.cognitive_mechanism_ref}</p>
+                        <table>
+                            <thead>
+                                <tr className='border'>
+                                    <th className='border' scope="col">Big Five</th>
+                                    <th className='border' scope="col">Age</th>
+                                    <th className='border' scope="col">Ecology</th>
+                                    <th className='border' scope="col">Sex</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr className='border'>
+                                    <td className='text-sm border' scope="row">
+                                        <div className='flex flex-col'>
+                                            <p>{selectedElement.bigfive_ope && selectedElement.bigfive_ope + ' openness to experience'}</p>
+                                            <p className='text-xs text-gray-600'>{selectedElement.bigfive_ope_ref && '(' + selectedElement.bigfive_ope_ref + ')'}</p>
+                                        </div>
+                                        <div className='flex flex-col'>
+                                            <p>{selectedElement.bigfive_con && selectedElement.bigfive_con + ' conscientiousness'}</p>
+                                            <p className='text-xs text-gray-600'>{selectedElement.bigfive_con_ref && '(' + selectedElement.bigfive_con_ref + ')'}</p>
+                                        </div>
+                                        <div className='flex flex-col'>
+                                            <p>{selectedElement.bigfive_ext && selectedElement.bigfive_ext + ' extraversion'}</p>
+                                            <p className='text-xs text-gray-600'>{selectedElement.bigfive_ext_ref && '(' + selectedElement.bigfive_ext_ref + ')'}</p>
+                                        </div>
+                                        <div className='flex flex-col'>
+                                            <p>{selectedElement.bigfive_agr && selectedElement.bigfive_agr + ' agreeableness'}</p>
+                                            <p className='text-xs text-gray-600'>{selectedElement.bigfive_agr_ref && '(' + selectedElement.bigfive_agr_ref + ')'}</p>
+                                        </div>
+                                        <div className='flex flex-col'>
+                                            <p>{selectedElement.bigfive_neu && selectedElement.bigfive_neu + ' neuroticism'}</p>
+                                            <p className='text-xs text-gray-600'>{selectedElement.bigfive_neu_ref && '(' + selectedElement.bigfive_neu_ref + ')'}</p>
+                                        </div>
+                                    </td>
+                                    <td className='text-sm border'>
+                                        <div className='flex flex-col'>
+                                            <p>{selectedElement.age && selectedElement.age}</p>
+                                            <p className='text-xs text-gray-600'>{selectedElement.age_ref && '(' + selectedElement.age_ref + ')'}</p>
+                                        </div>
+                                    </td>
+                                    <td className='text-sm border'>
+                                        <div className='flex flex-col'>
+                                            <p>{selectedElement.ecology && selectedElement.ecology}</p>
+                                            <p className='text-xs text-gray-600'>{selectedElement.ecology_ref && '(' + selectedElement.ecology_ref + ')'}</p>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <p>{selectedElement.ecology && selectedElement.sex}</p>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div className='flex flex-col'>
+                        <h3 className='text-2xl' >Fiction</h3>
+                        <div className='flex'>
+                            <p className='font-bold'>Description of the ingredient :</p>
+                            <p>{selectedElement.description_ingredient}</p>
+                        </div>
+                        <div className='flex'>
+                            <p className='font-bold'>Example of the ingredient :</p>
+                            <p>{selectedElement.example_ingredient}</p>
+                        </div>
+                        <p>{selectedElement.summary_ingredient}</p>
+                    </div>
+                    <div className='flex flex-col'>
+                        <h3 className='text-2xl' >Bibliography</h3>
+                        <div className='flex'>
+                            <p>Description of the ingredient</p>
+                            <p>{selectedElement.description_ingredient}</p>
+                        </div>
+                        <div className='flex'>
+                            <p>Example of the ingredient</p>
+                            <p>{selectedElement.example_ingredient}</p>
+                        </div>
+                        <p>{selectedElement.summary_ingredient}</p>
+                    </div>
                 </div>
             )}
         </div>
