@@ -14,8 +14,11 @@ export default function Admin() {
     const handleUpload = async () => {
         try {
             const storageRef = ref(storage, 'data')
+            // uploadBytes met le fichier dans le storage
             const snapshot = await uploadBytes(storageRef, file)
             console.log('Uploaded a blob or file!', snapshot)
+            
+            // process CSV se charge de mettre a jour la base de données firestore avec le nouveau fichier
             await processCSV(file)
         } catch (error) {
             console.error('Error uploading file', error)
@@ -23,9 +26,9 @@ export default function Admin() {
     }
 
     const clearCollection = async () => {
-        console.log('Clearing collection')
+        // console.log('Clearing collection')
         const querySnapshot = await getDocs(collection(db, "mechanisms"));
-        console.log('querySnapshot', querySnapshot)
+        // console.log('querySnapshot', querySnapshot)
 
         const batch = writeBatch(db);
 
@@ -41,7 +44,7 @@ export default function Admin() {
         Papa.parse(file, {
             header: true,
             complete: async (result) => {
-                console.log('Parsed CSV', result)
+                // console.log('Parsed CSV', result)
 
                 // Suppression des données existantes
                 await clearCollection()
@@ -56,7 +59,10 @@ export default function Admin() {
                 //commit du batch
                 try {
                     await batch.commit();
-                    alert('CSV data has been processed and stored in Firestore.');
+                    alert('CSV data has been processed and the website is now up to date.');
+                    setIsLogged(false) // logout
+                    setPassword('') // reset password
+                    setFile(null) // reset file
                 } catch (error) {
                     console.error('Error updating Firestore:', error);
                 }
@@ -85,11 +91,8 @@ export default function Admin() {
                 <button
                     className='bg-blue-500 text-white p-2 rounded-md mt-2 cursor-pointer hover:bg-blue-700 duration-200'
                     onClick={() => {
-                        console.log('clicked')
-                        console.log('password', password)
-                        console.log(process.env.NEXT_PUBLIC_SECRET_ADMIN_PASSWORD)
                         if (process.env.NEXT_PUBLIC_SECRET_ADMIN_PASSWORD === password) {
-                            console.log('Logged in')
+                            // console.log('Logged in')
                             setIsLogged(true)
                         }
                     }}>
