@@ -1,13 +1,16 @@
 'use client'
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '@/firebase/firebase';
+import Filters from './Filters';
 
 const PeriodicTable = () => {
     const [selectedElement, setSelectedElement] = useState(null);
-    const [elementsDisplayed, setElementsDisplayed] = useState();
+    const [elementsFiltered, setElementsFiltered] = useState();
 
     const [mechanisms, setMechanisms] = useState([]);
+
+    const panelRef = useRef(null);
 
     useEffect(() => {
         const fetchMechanisms = async () => {
@@ -16,10 +19,29 @@ const PeriodicTable = () => {
             const mechanismsList = mechanismsSnapshot.docs.map((doc) => doc.data());
             console.log('mechanislsList', mechanismsList);
             setMechanisms(mechanismsList);
+            setElementsFiltered(mechanismsList);
         };
 
         fetchMechanisms();
     }, [])
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (panelRef.current && !panelRef.current.contains(event.target)) {
+                setSelectedElement(null);
+            }
+        };
+
+        if (selectedElement) {
+            document.addEventListener('mousedown', handleClickOutside);
+        } else {
+            document.removeEventListener('mousedown', handleClickOutside);
+        }
+
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [selectedElement]);
 
     const renderBibliography = (element) => {
         const refs = [];
@@ -43,63 +65,27 @@ const PeriodicTable = () => {
         );
     };
 
-    const renderFilterButtons = () => {
-        return (
-            <div className="flex justify-center mb-4">
-                <button
-                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2"
-                    onClick={() => filterElements('group1')}
-                >
-                    Group 1
-                </button>
-                <button
-                    className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mr-2"
-                    onClick={() => filterElements('group2')}
-                >
-                    Group 2
-                </button>
-                <button
-                    className="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded mr-2"
-                    onClick={() => filterElements('group3')}
-                >
-                    Group 3
-                </button>
-                <button
-                    className="bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded mr-2"
-                    onClick={() => filterElements('group4')}
-                >
-                    Group 4
-                </button>
-                <button
-                    className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
-                    onClick={() => filterElements('group5')}
-                >
-                    Group 5
-                </button>
-            </div>
-        );
-    };
-
     const handleElementClick = (element) => {
         setSelectedElement(element);
     };
 
-    const filterElements = (group) => {
-        if (elementsDisplayed.length === elements.length) {
-            const filteredElements = elements.filter((element) => element.group === group);
-            setElementsDisplayed(filteredElements);
-        } else {
-            setElementsDisplayed(elements);
+    const handleFilter = (filter, value = 0) => {
+        console.log('filter :', filter, value);
+        const temp = mechanisms.filter((element) => {
+            return element[filter] === value;
         }
-    };
+        );
+        setElementsFiltered(temp);
+        console.log('temp :', temp)
+    }
 
     return (
-        <div className="relative container">
+        <section id='table' className="relative container">
 
-            {renderFilterButtons()}
+            <Filters handleFilter={handleFilter} />
 
-            <div className="grid grid-cols-6 gap-4 p-4 rounded-lg">
-                {mechanisms.map((element) => (
+            <div className="grid grid-cols-6 gap-4 mt-8 p-4 rounded-lg">
+                {elementsFiltered && elementsFiltered.map((element) => (
                     <div
                         key={element.cognitive_mechanism}
                         className={`flex flex-col items-center justify-center p-4 rounded-lg cursor-pointer shadow-sm hover:shadow-md hover:scale-105 duration-100 bg-blue-200`}
@@ -114,7 +100,7 @@ const PeriodicTable = () => {
 
 
             {selectedElement && (
-                <div className="fixed left-0 top-0 h-dvh w-1/3 bg-white p-4 gap-10 flex flex-col shadow-lg overflow-y-scroll">
+                <div ref={panelRef} className="fixed left-0 top-0 h-dvh w-1/3 bg-white p-4 gap-10 flex flex-col shadow-lg overflow-y-scroll">
 
                     <button
                         className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
@@ -212,7 +198,7 @@ const PeriodicTable = () => {
                     </div>
                 </div>
             )}
-        </div>
+        </section>
     );
 };
 

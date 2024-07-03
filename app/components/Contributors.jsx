@@ -25,7 +25,7 @@ const Contributors = () => {
         return `${randomName} ${randomSurname}`;
     }
     return (
-        <section className='flex flex-col gap-12 items-center'>
+        <section id='contributors' className='flex flex-col gap-12 items-center'>
             <h2 className='text-4xl text-center'>Contributors</h2>
             <div className='grid grid-cols-6 gap-4'>
                 {contributorsWithColor.map(contributor => (
