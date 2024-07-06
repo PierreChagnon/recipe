@@ -12,10 +12,10 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className={outfit.className + ' ' + 'lg:flex lg:flex-col hidden'}>
+      <body className={outfit.className + ' ' + {/*'lg:flex lg:flex-col hidden'*/ }}>
         <NavBar />
         {children}
-        </body>
+      </body>
     </html>
   );
 }

@@ -8,7 +8,7 @@ const Abstract = () => {
         <section id='abstract' className='flex flex-col gap-12 items-center'>
             <h2 className='text-4xl text-center'>Abstract</h2>
             <p className='px-24 leading-loose text-justify'>{abstractText}</p>
-            <Link href='/' className='text-center text-white bg-black p-4 border border-black w-40 rounded-lg hover:bg-white hover:text-black duration-200'>Read More</Link>
+            <Link href='/' className='text-center text-black bg-white p-4 border border-black w-40 rounded-lg hover:bg-black hover:text-white duration-200'>Read More</Link>
         </section>
     );
 };

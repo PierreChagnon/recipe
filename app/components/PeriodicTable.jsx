@@ -11,6 +11,7 @@ const PeriodicTable = () => {
     const [mechanisms, setMechanisms] = useState([]);
 
     const panelRef = useRef(null);
+    const filtersArrayRef = useRef([]);
 
     useEffect(() => {
         const fetchMechanisms = async () => {
@@ -18,8 +19,22 @@ const PeriodicTable = () => {
             const mechanismsSnapshot = await getDocs(mechanismsCollection);
             const mechanismsList = mechanismsSnapshot.docs.map((doc) => doc.data());
             console.log('mechanislsList', mechanismsList);
-            setMechanisms(mechanismsList);
-            setElementsFiltered(mechanismsList);
+
+            // on groupe les éléments par adaptive challenge
+            const tempGrouped = [];
+            mechanismsList.forEach((element) => {
+                const challenge = element.general_adaptive_challenge;
+                if (!tempGrouped[challenge]) {
+                    tempGrouped[challenge] = [];
+                }
+                tempGrouped[challenge].push(element);
+            });
+            console.log('tempGrouped:', tempGrouped);
+
+            const finalArray = [...tempGrouped['Threats'], ...tempGrouped['Self'], ...tempGrouped['Cooperators'], ...tempGrouped['Mates'], ...tempGrouped['Kin']];
+
+            setMechanisms(finalArray);
+            setElementsFiltered(finalArray);
         };
 
         fetchMechanisms();
@@ -69,33 +84,117 @@ const PeriodicTable = () => {
         setSelectedElement(element);
     };
 
-    const handleFilter = (filter, value = 0) => {
-        console.log('filter :', filter, value);
+    const handleFilter = (filter, value) => {
+        console.log('filter:', filter, value);
+
+        const newFiltersArray = filtersArrayRef.current.filter((element) => element.filter !== filter);
+
+        const existingElement = filtersArrayRef.current.find((element) => element.filter === filter);
+
+        if (!existingElement) {
+            console.log("Le filtre n'existe pas, on l'ajoute");
+            newFiltersArray.push({ filter, value });
+        } else if (existingElement.value !== value) {
+            console.log("Le filtre existe déjà, mais la valeur est différente");
+            newFiltersArray.push({ filter, value });
+        }
+
+        filtersArrayRef.current = newFiltersArray;
+        console.log('Updated filtersArrayRef.current:', filtersArrayRef.current);
+
+        if (filtersArrayRef.current.length === 0) {
+            setElementsFiltered(mechanisms);
+            return;
+        }
+
         const temp = mechanisms.filter((element) => {
-            return element[filter] === value;
+            // utilisation de every plutôt que forEach car elle retourne un booléen
+            // ne pas oublier le return avant le every, afin de retourner le booléen
+            return filtersArrayRef.current.every((f) => {
+                return element[f.filter] === f.value;
+            })
         }
         );
+
         setElementsFiltered(temp);
         console.log('temp :', temp)
     }
+
+    const getColorByElementGeneralAdaptiveChallenge = (challenge) => {
+        switch (challenge) {
+            case "Threats":
+                return "bg-green-200";
+            case "Self":
+                return "bg-yellow-200";
+            case "Cooperators":
+                return "bg-red-200";
+            case "Mates":
+                return "bg-cyan-200";
+            case "Kin":
+                return "bg-purple-200";
+            default:
+                return "bg-blue-200";
+        }
+    };
+
+    const renderFilterButtons = () => {
+        return (
+            <div className="flex justify-center mt-4">
+                <div
+                    className="py-2 px-6 text-sm flex items-center gap-2 rounded"
+                >
+                    <span className='h-4 w-6 bg-green-200' />
+                    <p>Threats</p>
+                </div>
+                <div
+                    className="py-2 px-6 text-sm flex items-center gap-2 rounded"
+                >
+                    <span className='h-4 w-6 bg-yellow-200' />
+                    <p>Self</p>
+                </div>
+                <div
+                    className="py-2 px-6 text-sm flex items-center gap-2 rounded"
+                >
+                    <span className='h-4 w-6 bg-red-200' />
+                    <p>Cooperators</p>
+                </div>
+                <div
+                    className="py-2 px-6 text-sm flex items-center gap-2 rounded"
+                >
+                    <span className='h-4 w-6 bg-cyan-200' />
+                    <p>Mates</p>
+                </div>
+                <div
+                    className="py-2 px-6 text-sm flex items-center gap-2 rounded"
+                >
+                    <span className='h-4 w-6 bg-purple-200' />
+                    <p>Kin</p>
+                </div>
+            </div>
+        );
+    };
 
     return (
         <section id='table' className="relative container">
 
             <Filters handleFilter={handleFilter} />
 
-            <div className="grid grid-cols-6 gap-4 mt-8 p-4 rounded-lg">
+            <div className="grid grid-cols-5 gap-2 mt-8 p-4 rounded-lg">
                 {elementsFiltered && elementsFiltered.map((element) => (
                     <div
                         key={element.cognitive_mechanism}
-                        className={`flex flex-col items-center justify-center p-4 rounded-lg cursor-pointer shadow-sm hover:shadow-md hover:scale-105 duration-100 bg-blue-200`}
+                        className={`flex flex-col items-center justify-center p-4 rounded-lg cursor-pointer shadow-sm hover:shadow-md hover:scale-105 duration-200 ${getColorByElementGeneralAdaptiveChallenge(element.general_adaptive_challenge)}`}
                         onClick={() => handleElementClick(element)}
                     >
-                        <h2 className="text-xl text-center font-bold">{element.cognitive_mechanism}</h2>
-                        <p className="text-sm truncate">{element.specific_adaptive_challenge}</p>
+                        <p className="text-center text-sm font-bold">{element.cognitive_mechanism}</p>
+                        <p className="text-xs truncate">{element.specific_adaptive_challenge}</p>
+                        <p>{element.general_adaptive_challenge}</p>
                     </div>
                 ))}
             </div>
+
+
+            {renderFilterButtons()}
 
 
 
