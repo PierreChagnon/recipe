@@ -5,13 +5,11 @@ import Contributors from './components/Contributors';
 
 function App() {
   return (
-    <div className="App">  
-      <main className="py-20 px-24 flex flex-col gap-44">
-        <PeriodicTable />
-        <Abstract />
-        <Contributors />
-      </main>
-    </div>
+    <main className="py-20 bg-[#fafafa] px-24 flex flex-col items-center gap-32">
+      <PeriodicTable />
+      <Abstract />
+      <Contributors />
+    </main>
   );
 }
 

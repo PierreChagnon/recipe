@@ -1,4 +1,6 @@
 import React from 'react';
+import { contributorsArray } from '@/lib/contributors';
+import Link from 'next/link';
 
 const Contributors = () => {
     const contributors = Array(50).fill().map((_, index) => ({
@@ -8,11 +10,11 @@ const Contributors = () => {
 
     const contributorsWithColor = contributors.map(contributor => ({
         id: contributor.id,
-        color: getRandomColor(),
+        color: getRandomBgColor(),
         name: generateRandomName(),
     }));
 
-    function getRandomColor() {
+    function getRandomBgColor() {
         const colors = ['bg-red-200', 'bg-blue-200', 'bg-green-200', 'bg-yellow-200', 'bg-orange-200', 'bg-purple-200'];
         return colors[Math.floor(Math.random() * colors.length)];
     }
@@ -25,14 +27,17 @@ const Contributors = () => {
         return `${randomName} ${randomSurname}`;
     }
     return (
-        <section id='contributors' className='flex flex-col gap-12 items-center'>
+        <section id='contributors' className='flex flex-col gap-16 items-center pt-32 border-t border-gray-300'>
             <h2 className='text-4xl text-center'>Contributors</h2>
-            <div className='grid grid-cols-6 gap-4'>
-                {contributorsWithColor.map(contributor => (
-                    <div key={contributor.id} className='flex items-center border-gray-300 border cursor-pointer p-4 rounded-lg gap-4 shadow-sm hover:shadow-md duration-200'>
-                        <div className={`w-8 h-8 rounded-full ${contributor.color}`}></div>
-                        <p>{contributor.name}</p>
-                    </div>
+            <div className='flex flex-wrap justify-center gap-2'>
+                {contributorsArray.map(contributor => (
+                    <Link href={contributor.website} target='_blank' key={contributor.name} className='flex flex-col w-1/4 border-gray-300 bg-white border text-sm cursor-pointer p-4 rounded-lg gap-6 shadow-sm hover:shadow-md duration-200'>
+                        <div className={`w-8 h-8 rounded-full ${getRandomBgColor()}`}></div>
+                        <div className='flex flex-col'>
+                            <p className='text-nowrap'>{contributor.name}</p>
+                            <p className='text-xs text-gray-400'>{contributor.institution}</p>
+                        </div>
+                    </Link>
                 ))}
             </div>
         </section>

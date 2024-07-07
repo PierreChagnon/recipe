@@ -16,7 +16,7 @@ export default function Admin() {
             const storageRef = ref(storage, 'data')
             // uploadBytes met le fichier dans le storage
             const snapshot = await uploadBytes(storageRef, file)
-            console.log('Uploaded a blob or file!', snapshot)
+            // console.log('Uploaded a blob or file!', snapshot)
             
             // process CSV se charge de mettre a jour la base de données firestore avec le nouveau fichier
             await processCSV(file)

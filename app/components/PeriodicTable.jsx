@@ -18,7 +18,7 @@ const PeriodicTable = () => {
             const mechanismsCollection = collection(db, 'mechanisms');
             const mechanismsSnapshot = await getDocs(mechanismsCollection);
             const mechanismsList = mechanismsSnapshot.docs.map((doc) => doc.data());
-            console.log('mechanislsList', mechanismsList);
+            // console.log('mechanislsList', mechanismsList);
 
             // on groupe les éléments par adaptive challenge
             const tempGrouped = [];
@@ -29,7 +29,7 @@ const PeriodicTable = () => {
                 }
                 tempGrouped[challenge].push(element);
             });
-            console.log('tempGrouped:', tempGrouped);
+            // console.log('tempGrouped:', tempGrouped);
 
             const finalArray = [...tempGrouped['Threats'], ...tempGrouped['Self'], ...tempGrouped['Cooperators'], ...tempGrouped['Mates'], ...tempGrouped['Kin']];
 
@@ -84,23 +84,30 @@ const PeriodicTable = () => {
         setSelectedElement(element);
     };
 
+    const handleResetFilters = () => {
+        // console.log('Reset filters');
+        filtersArrayRef.current = [];
+        setElementsFiltered(mechanisms);
+    };
+
+
     const handleFilter = (filter, value) => {
-        console.log('filter:', filter, value);
+        // console.log('filter:', filter, value);
 
         const newFiltersArray = filtersArrayRef.current.filter((element) => element.filter !== filter);
 
         const existingElement = filtersArrayRef.current.find((element) => element.filter === filter);
 
         if (!existingElement) {
-            console.log("Le filtre n'existe pas, on l'ajoute");
+            // console.log("Le filtre n'existe pas, on l'ajoute");
             newFiltersArray.push({ filter, value });
         } else if (existingElement.value !== value) {
-            console.log("Le filtre existe déjà, mais la valeur est différente");
+            // console.log("Le filtre existe déjà, mais la valeur est différente");
             newFiltersArray.push({ filter, value });
         }
 
         filtersArrayRef.current = newFiltersArray;
-        console.log('Updated filtersArrayRef.current:', filtersArrayRef.current);
+        // console.log('Updated filtersArrayRef.current:', filtersArrayRef.current);
 
         if (filtersArrayRef.current.length === 0) {
             setElementsFiltered(mechanisms);
@@ -117,7 +124,7 @@ const PeriodicTable = () => {
         );
 
         setElementsFiltered(temp);
-        console.log('temp :', temp)
+        // console.log('temp :', temp)
     }
 
     const getColorByElementGeneralAdaptiveChallenge = (challenge) => {
@@ -137,9 +144,10 @@ const PeriodicTable = () => {
         }
     };
 
-    const renderFilterButtons = () => {
+    const renderLegends = () => {
         return (
-            <div className="flex justify-center mt-4">
+            <div className="flex justify-center items-center mt-4">
+                <span>General Adaptive Challenges :</span>
                 <div
                     className="py-2 px-6 text-sm flex items-center gap-2 rounded"
                 >
@@ -175,31 +183,30 @@ const PeriodicTable = () => {
     };
 
     return (
-        <section id='table' className="relative container">
+        <section id='table' className="relative container border border-gray-300 rounded-xl px-4 2xl:px-10 py-10 bg-white">
 
-            <Filters handleFilter={handleFilter} />
+            <Filters handleResetFilters={handleResetFilters} handleFilter={handleFilter} />
 
-            <div className="grid grid-cols-5 gap-2 mt-8 p-4 rounded-lg">
+            <div className="grid grid-cols-5 gap-2 mt-8 rounded-lg">
                 {elementsFiltered && elementsFiltered.map((element) => (
                     <div
                         key={element.cognitive_mechanism}
-                        className={`flex flex-col items-center justify-center p-4 rounded-lg cursor-pointer shadow-sm hover:shadow-md hover:scale-105 duration-200 ${getColorByElementGeneralAdaptiveChallenge(element.general_adaptive_challenge)}`}
+                        className={`flex flex-col items-center gap-2 justify-center p-4 rounded-lg cursor-pointer shadow-sm hover:shadow-md hover:scale-105 duration-200 ${getColorByElementGeneralAdaptiveChallenge(element.general_adaptive_challenge)}`}
                         onClick={() => handleElementClick(element)}
                     >
                         <p className="text-center text-sm font-bold">{element.cognitive_mechanism}</p>
                         <p className="text-xs truncate">{element.specific_adaptive_challenge}</p>
-                        <p>{element.general_adaptive_challenge}</p>
                     </div>
                 ))}
             </div>
 
 
-            {renderFilterButtons()}
+            {renderLegends()}
 
 
 
             {selectedElement && (
-                <div ref={panelRef} className="fixed left-0 top-0 h-dvh w-1/3 bg-white p-4 gap-10 flex flex-col shadow-lg overflow-y-scroll">
+                <div ref={panelRef} className="fixed rounded-md border bg-white left-0 top-0 h-dvh w-1/3 p-4 gap-10 flex flex-col shadow-lg overflow-y-scroll">
 
                     <button
                         className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
@@ -220,7 +227,7 @@ const PeriodicTable = () => {
                         <h2 className="text-2xl font-bold text-center">{selectedElement.cognitive_mechanism}</h2>
                         <p className="">{selectedElement.summary_mechanism}</p>
                     </div>
-                    <div className='flex flex-col gap-4 rounded-md border-2 px-2 py-4'>
+                    <div className='flex flex-col gap-4 bg-white rounded-md border-2 px-2 py-4'>
                         <h3 className='text-2xl' >Cognition</h3>
                         <div className='flex'>
                             <p className='font-bold text-nowrap'>Adaptive challenge :</p>
@@ -279,7 +286,7 @@ const PeriodicTable = () => {
                             </tbody>
                         </table>
                     </div>
-                    <div className='flex flex-col gap-4 rounded-md border-2 px-2 py-4'>
+                    <div className='flex flex-col gap-4 bg-white rounded-md border-2 px-2 py-4'>
                         <h3 className='text-2xl' >Fiction</h3>
                         <div className='flex'>
                             <p className='font-bold'>Description of the ingredient :</p>
@@ -291,7 +298,7 @@ const PeriodicTable = () => {
                         </div>
                         <p className=''>{selectedElement.summary_ingredient}</p>
                     </div>
-                    <div className='flex flex-col gap-4 rounded-md border-2 px-2 py-4'>
+                    <div className='flex flex-col gap-4 bg-white rounded-md border-2 px-2 py-4'>
                         <h3 className='text-2xl' >Bibliography</h3>
                         {renderBibliography(selectedElement)}
                     </div>

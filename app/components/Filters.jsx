@@ -31,14 +31,14 @@ const Chip = ({ children, filter, value, handleFilter, isActive, filterCategory 
     return (
         <button
             onClick={() => handleFilter(filterCategory, filter, value)}
-            className={`py-1 px-4 text-xs rounded-full border-black border ${isActive ? 'bg-black text-white' : 'bg-white text-black'} hover:bg-black hover:text-white duration-200`}
+            className={`py-1 px-4 text-xs rounded-full border-gray-300 border ${isActive ? 'bg-slate-300' : 'bg-white text-black'} hover:bg-gray-200 duration-200`}
         >
             {children}
         </button>
     );
 };
 
-export default function Filters({ handleFilter }) {
+export default function Filters({ handleFilter, handleResetFilters }) {
     const [activeChips, setActiveChips] = useState({});
 
     const handleChipClick = (filterCategory, filter, value) => {
@@ -59,7 +59,7 @@ export default function Filters({ handleFilter }) {
     };
 
     return (
-        <div className='flex justify-around'>
+        <div className='flex justify-center gap-8'>
             {filtersArray.map((filterGroup, index) => (
                 <div key={index} className='flex flex-col items-center gap-2'>
                     <p>{filterGroup.title}</p>
@@ -101,6 +101,26 @@ export default function Filters({ handleFilter }) {
                     </div>
                 </div>
             ))}
+            <div className='flex items-start' >
+                <button
+                    onClick={() => {
+                        setActiveChips({});
+                        handleResetFilters();
+                    }}
+                    className='flex items-center bg-gray-200 hover:bg-slate-300 duration-200 px-4 py-1 rounded-md text-xs gap-2'
+                >
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-4 w-4"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                    >
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                    Clear filters
+                </button>
+            </div>
         </div>
     );
 }
