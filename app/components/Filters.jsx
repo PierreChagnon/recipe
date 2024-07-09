@@ -10,7 +10,7 @@ const filtersArray = [
     {
         title: 'Developmental period',
         title_ref: 'age', // référence à la base de données (le nom de la colonne)
-        values: ['Children', 'Adolescence', 'Adult'],
+        values: ['Children', 'Adolescents', 'Adult'],
         values_ref: ['children', 'adolescence', 'adult'], // référence aux valeurs possibles de la base de données
     },
     {
@@ -56,12 +56,13 @@ export default function Filters({ handleFilter, handleResetFilters }) {
         });
 
         handleFilter(filter, value);
+        console.log(activeChips);
     };
 
     return (
-        <div className='flex justify-center gap-8'>
+        <div className='flex justify-center gap-8 mb-12'>
             {filtersArray.map((filterGroup, index) => (
-                <div key={index} className='flex flex-col items-center gap-2'>
+                <div key={index} className='flex flex-col items-center gap-3 2xl:gap-4'>
                     <p>{filterGroup.title}</p>
                     <div className='flex flex-col gap-1'>
                         {filterGroup.title !== 'Personality traits' ?
@@ -80,7 +81,7 @@ export default function Filters({ handleFilter, handleResetFilters }) {
                             :
                             filterGroup.values.map((trait, j) => (
                                 <div className='flex justify-between' key={trait}>
-                                    <p>{trait}</p>
+                                    <p className='text-sm'>{trait}</p>
                                     <div className='ml-2 flex gap-1'>
                                         {filterGroup.values_ref.map((level, i) => (
                                             <Chip
@@ -101,13 +102,14 @@ export default function Filters({ handleFilter, handleResetFilters }) {
                     </div>
                 </div>
             ))}
-            <div className='flex items-start' >
+            <div className={`flex items-start`} >
                 <button
+                    disabled={Object.keys(activeChips).length === 0}
                     onClick={() => {
                         setActiveChips({});
                         handleResetFilters();
                     }}
-                    className='flex items-center bg-gray-200 hover:bg-slate-300 duration-200 px-4 py-1 rounded-md text-xs gap-2'
+                    className='flex items-center disabled:bg-gray-100 disabled:text-gray-500 bg-white border border-gray-300 hover:bg-gray-200 shadow-sm duration-200 px-4 py-1 rounded-full text-xs gap-2'
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"

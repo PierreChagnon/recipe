@@ -28,7 +28,7 @@ const Contributors = () => {
     }
     return (
         <section id='contributors' className='flex flex-col gap-16 items-center pt-32 border-t border-gray-300'>
-            <h2 className='text-4xl text-center'>Contributors</h2>
+            <h2 className='text-4xl'>Contributors</h2>
             <div className='flex flex-wrap justify-center gap-2'>
                 {contributorsArray.map(contributor => (
                     <Link href={contributor.website} target='_blank' key={contributor.name} className='flex flex-col w-1/4 border-gray-300 bg-white border text-sm cursor-pointer p-4 rounded-lg gap-6 shadow-sm hover:shadow-md duration-200'>

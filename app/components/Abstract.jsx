@@ -6,9 +6,9 @@ const Abstract = () => {
 
     return (
         <section id='abstract' className='flex flex-col gap-16 items-center border-t border-gray-300 pt-32'>
-            <h2 className='text-4xl text-center'>Abstract</h2>
-            <p className='px-24 2xl:px-64 leading-loose text-justify'>{abstractText}</p>
-            <Link href='/' className='text-center text-black bg-white p-2 border border-gray-300 w-40 rounded-lg hover:bg-gray-200 duration-200'>Read More</Link>
+            <h2 className='text-4xl'>Abstract</h2>
+            <p className='px-12 lg:px-16 xl:px-24 2xl:px-36 3xl:px-48 leading-loose text-justify'>{abstractText}</p>
+            <Link href='https://osf.io/preprints/osf/me6bz' target='blank' className='text-center text-black bg-white p-2 border border-gray-400 w-40 rounded-lg hover:bg-gray-200 duration-200'>Read More</Link>
         </section>
     );
 };

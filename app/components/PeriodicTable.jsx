@@ -124,6 +124,7 @@ const PeriodicTable = () => {
         );
 
         setElementsFiltered(temp);
+        console.log('filtersArrayRef.current :', filtersArrayRef.current)
         // console.log('temp :', temp)
     }
 
@@ -146,19 +147,19 @@ const PeriodicTable = () => {
 
     const renderLegends = () => {
         return (
-            <div className="flex justify-center items-center mt-4">
-                <span>General Adaptive Challenges :</span>
-                <div
-                    className="py-2 px-6 text-sm flex items-center gap-2 rounded"
-                >
-                    <span className='h-4 w-6 bg-green-200' />
-                    <p>Threats</p>
-                </div>
+            <div className="flex justify-center items-center mt-8 2xl:mt-12">
+                <span>General adaptive challenges :</span>
                 <div
                     className="py-2 px-6 text-sm flex items-center gap-2 rounded"
                 >
                     <span className='h-4 w-6 bg-yellow-200' />
                     <p>Self</p>
+                </div>
+                <div
+                    className="py-2 px-6 text-sm flex items-center gap-2 rounded"
+                >
+                    <span className='h-4 w-6 bg-green-200' />
+                    <p>Threats</p>
                 </div>
                 <div
                     className="py-2 px-6 text-sm flex items-center gap-2 rounded"
@@ -169,21 +170,21 @@ const PeriodicTable = () => {
                 <div
                     className="py-2 px-6 text-sm flex items-center gap-2 rounded"
                 >
-                    <span className='h-4 w-6 bg-cyan-200' />
-                    <p>Mates</p>
+                    <span className='h-4 w-6 bg-purple-200' />
+                    <p>Kin</p>
                 </div>
                 <div
                     className="py-2 px-6 text-sm flex items-center gap-2 rounded"
                 >
-                    <span className='h-4 w-6 bg-purple-200' />
-                    <p>Kin</p>
+                    <span className='h-4 w-6 bg-cyan-200' />
+                    <p>Mates</p>
                 </div>
             </div>
         );
     };
 
     return (
-        <section id='table' className="relative container border border-gray-300 rounded-xl px-4 2xl:px-10 py-10 bg-white">
+        <section id='table' className="relative container border border-gray-300 rounded-xl px-4 xl:px-8 2xl:px-16 3xl:px-24 py-10 bg-white">
 
             <Filters handleResetFilters={handleResetFilters} handleFilter={handleFilter} />
 
@@ -204,9 +205,8 @@ const PeriodicTable = () => {
             {renderLegends()}
 
 
-
             {selectedElement && (
-                <div ref={panelRef} className="fixed rounded-md border bg-white left-0 top-0 h-dvh w-1/3 p-4 gap-10 flex flex-col shadow-lg overflow-y-scroll">
+                <div ref={panelRef} className="fixed rounded-md border border-gray-300 bg-transparent backdrop-blur-3xl left-2 top-2 bottom-2 xl:left-2 xl:top-4 xl:bottom-4 w-[40%] w p-4 2xl:px-10 3xl:px-16 gap-10 flex flex-col shadow-lg overflow-y-scroll">
 
                     <button
                         className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
@@ -223,17 +223,15 @@ const PeriodicTable = () => {
                         </svg>
                     </button>
 
-                    <div className='flex flex-col gap-4'>
-                        <h2 className="text-2xl font-bold text-center">{selectedElement.cognitive_mechanism}</h2>
-                        <p className="">{selectedElement.summary_mechanism}</p>
-                    </div>
+                    <h2 className="text-2xl font-bold text-center">{selectedElement.cognitive_mechanism}</h2>
                     <div className='flex flex-col gap-4 bg-white rounded-md border-2 px-2 py-4'>
-                        <h3 className='text-2xl' >Cognition</h3>
+                        <h3 className='text-xl' >Cognition</h3>
+                        <p className="">{selectedElement.summary_mechanism}</p>
                         <div className='flex'>
                             <p className='font-bold text-nowrap'>Adaptive challenge :</p>
                             <p>{selectedElement.specific_adaptive_challenge}</p>
                         </div>
-                        <p>{selectedElement.cognitive_mechanism_ref}</p>
+                        <p className='text-xs text-gray-600'>{selectedElement.cognitive_mechanism_ref}</p>
                         <table>
                             <thead>
                                 <tr className='border'>
@@ -245,7 +243,7 @@ const PeriodicTable = () => {
                             </thead>
                             <tbody>
                                 <tr className='border'>
-                                    <td className='text-sm border' scope="row">
+                                    <td className='text-sm text-center border' scope="row">
                                         <div className='flex flex-col'>
                                             <p>{selectedElement.bigfive_ope && selectedElement.bigfive_ope + ' openness to experience'}</p>
                                             <p className='text-xs text-gray-600'>{selectedElement.bigfive_ope_ref && '(' + selectedElement.bigfive_ope_ref + ')'}</p>
@@ -267,19 +265,19 @@ const PeriodicTable = () => {
                                             <p className='text-xs text-gray-600'>{selectedElement.bigfive_neu_ref && '(' + selectedElement.bigfive_neu_ref + ')'}</p>
                                         </div>
                                     </td>
-                                    <td className='text-sm border'>
+                                    <td className='text-sm text-center border'>
                                         <div className='flex flex-col'>
                                             <p>{selectedElement.age && selectedElement.age}</p>
                                             <p className='text-xs text-gray-600'>{selectedElement.age_ref && '(' + selectedElement.age_ref + ')'}</p>
                                         </div>
                                     </td>
-                                    <td className='text-sm border'>
+                                    <td className='text-sm text-center border'>
                                         <div className='flex flex-col'>
                                             <p>{selectedElement.ecology && selectedElement.ecology}</p>
                                             <p className='text-xs text-gray-600'>{selectedElement.ecology_ref && '(' + selectedElement.ecology_ref + ')'}</p>
                                         </div>
                                     </td>
-                                    <td>
+                                    <td className='text-sm text-center border'>
                                         <p>{selectedElement.ecology && selectedElement.sex}</p>
                                     </td>
                                 </tr>
@@ -287,7 +285,8 @@ const PeriodicTable = () => {
                         </table>
                     </div>
                     <div className='flex flex-col gap-4 bg-white rounded-md border-2 px-2 py-4'>
-                        <h3 className='text-2xl' >Fiction</h3>
+                        <h3 className='text-xl' >Fiction</h3>
+                        <p className=''>{selectedElement.summary_ingredient}</p>
                         <div className='flex'>
                             <p className='font-bold'>Description of the ingredient :</p>
                             <p>{selectedElement.description_ingredient}</p>
@@ -296,10 +295,9 @@ const PeriodicTable = () => {
                             <p className='font-bold'>Example of the ingredient :</p>
                             <p>{selectedElement.example_ingredient}</p>
                         </div>
-                        <p className=''>{selectedElement.summary_ingredient}</p>
                     </div>
                     <div className='flex flex-col gap-4 bg-white rounded-md border-2 px-2 py-4'>
-                        <h3 className='text-2xl' >Bibliography</h3>
+                        <h3 className='text-xl' >Bibliography</h3>
                         {renderBibliography(selectedElement)}
                     </div>
                 </div>
