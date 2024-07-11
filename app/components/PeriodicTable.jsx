@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '@/firebase/firebase';
 import Filters from './Filters';
+import DownloadButton from './DownloadButton';
 
 const PeriodicTable = () => {
     const [selectedElement, setSelectedElement] = useState(null);
@@ -20,21 +21,12 @@ const PeriodicTable = () => {
             const mechanismsList = mechanismsSnapshot.docs.map((doc) => doc.data());
             // console.log('mechanislsList', mechanismsList);
 
-            // on groupe les éléments par adaptive challenge
-            const tempGrouped = [];
-            mechanismsList.forEach((element) => {
-                const challenge = element.general_adaptive_challenge;
-                if (!tempGrouped[challenge]) {
-                    tempGrouped[challenge] = [];
-                }
-                tempGrouped[challenge].push(element);
-            });
-            // console.log('tempGrouped:', tempGrouped);
+            // on met les éléments dans le bon ordre
+            mechanismsList.sort((a, b) => a.id - b.id);
+            // console.log('mechanismsList sorted', mechanismsList);
 
-            const finalArray = [...tempGrouped['Threats'], ...tempGrouped['Self'], ...tempGrouped['Cooperators'], ...tempGrouped['Mates'], ...tempGrouped['Kin']];
-
-            setMechanisms(finalArray);
-            setElementsFiltered(finalArray);
+            setMechanisms(mechanismsList);
+            setElementsFiltered(mechanismsList);
         };
 
         fetchMechanisms();
@@ -124,22 +116,24 @@ const PeriodicTable = () => {
         );
 
         setElementsFiltered(temp);
-        console.log('filtersArrayRef.current :', filtersArrayRef.current)
+        // console.log('filtersArrayRef.current :', filtersArrayRef.current)
         // console.log('temp :', temp)
     }
 
     const getColorByElementGeneralAdaptiveChallenge = (challenge) => {
         switch (challenge) {
-            case "Threats":
-                return "bg-green-200";
             case "Self":
-                return "bg-yellow-200";
+                return "bg-pastel-blue";
+            case "Threats":
+                return "bg-pastel-green";
             case "Cooperators":
-                return "bg-red-200";
-            case "Mates":
-                return "bg-cyan-200";
+                return "bg-pastel-brown";
+            case "Competitors":
+                return "bg-pastel-purple";
             case "Kin":
-                return "bg-purple-200";
+                return "bg-pastel-pink";
+            case "Mates":
+                return "bg-pastel-orange";
             default:
                 return "bg-blue-200";
         }
@@ -152,31 +146,37 @@ const PeriodicTable = () => {
                 <div
                     className="py-2 px-6 text-sm flex items-center gap-2 rounded"
                 >
-                    <span className='h-4 w-6 bg-yellow-200' />
+                    <span className='h-4 w-6 bg-pastel-blue' />
                     <p>Self</p>
                 </div>
                 <div
                     className="py-2 px-6 text-sm flex items-center gap-2 rounded"
                 >
-                    <span className='h-4 w-6 bg-green-200' />
+                    <span className='h-4 w-6 bg-pastel-green' />
                     <p>Threats</p>
                 </div>
                 <div
                     className="py-2 px-6 text-sm flex items-center gap-2 rounded"
                 >
-                    <span className='h-4 w-6 bg-red-200' />
+                    <span className='h-4 w-6 bg-pastel-brown' />
                     <p>Cooperators</p>
                 </div>
                 <div
                     className="py-2 px-6 text-sm flex items-center gap-2 rounded"
                 >
-                    <span className='h-4 w-6 bg-purple-200' />
+                    <span className='h-4 w-6 bg-pastel-purple' />
+                    <p>Competitors</p>
+                </div>
+                <div
+                    className="py-2 px-6 text-sm flex items-center gap-2 rounded"
+                >
+                    <span className='h-4 w-6 bg-pastel-pink' />
                     <p>Kin</p>
                 </div>
                 <div
                     className="py-2 px-6 text-sm flex items-center gap-2 rounded"
                 >
-                    <span className='h-4 w-6 bg-cyan-200' />
+                    <span className='h-4 w-6 bg-pastel-orange' />
                     <p>Mates</p>
                 </div>
             </div>
@@ -191,7 +191,7 @@ const PeriodicTable = () => {
             <div className="grid grid-cols-5 gap-2 mt-8 rounded-lg">
                 {elementsFiltered && elementsFiltered.map((element) => (
                     <div
-                        key={element.cognitive_mechanism}
+                        key={element.id}
                         className={`flex flex-col items-center gap-2 justify-center p-4 rounded-lg cursor-pointer shadow-sm hover:shadow-md hover:scale-105 duration-200 ${getColorByElementGeneralAdaptiveChallenge(element.general_adaptive_challenge)}`}
                         onClick={() => handleElementClick(element)}
                     >
@@ -204,17 +204,21 @@ const PeriodicTable = () => {
 
             {renderLegends()}
 
+            <div className="mt-8 2xl:mt-12 flex justify-end">
+                <DownloadButton />
+            </div>
+
 
             {selectedElement && (
-                <div ref={panelRef} className="fixed rounded-md border border-gray-300 bg-transparent backdrop-blur-3xl left-2 top-2 bottom-2 xl:left-2 xl:top-4 xl:bottom-4 w-[40%] w p-4 2xl:px-10 3xl:px-16 gap-10 flex flex-col shadow-lg overflow-y-scroll">
+                <div ref={panelRef} className="fixed rounded-md border border-gray-300 bg-transparent backdrop-blur-3xl left-2 top-2 bottom-2 xl:left-2 xl:top-4 xl:bottom-4 w-[40%] px-4 py-12 2xl:px-10 3xl:px-16 gap-16 flex flex-col shadow-lg overflow-y-scroll">
 
                     <button
-                        className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+                        className="absolute top-2 right-2 text-gray-500 hover:text-gray-700 border-2 border-gray-400 rounded-full p-1 transition duration-200"
                         onClick={() => setSelectedElement(null)}
                     >
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
-                            className="h-6 w-6"
+                            className="h-4 w-4"
                             fill="none"
                             viewBox="0 0 24 24"
                             stroke="currentColor"
@@ -224,26 +228,26 @@ const PeriodicTable = () => {
                     </button>
 
                     <h2 className="text-2xl font-bold text-center">{selectedElement.cognitive_mechanism}</h2>
-                    <div className='flex flex-col gap-4 bg-white rounded-md border-2 px-2 py-4'>
+                    <div className='flex flex-col gap-6 bg-white rounded-md border-2 px-4 py-6'>
                         <h3 className='text-xl' >Cognition</h3>
                         <p className="">{selectedElement.summary_mechanism}</p>
                         <div className='flex'>
                             <p className='font-bold text-nowrap'>Adaptive challenge :</p>
-                            <p>{selectedElement.specific_adaptive_challenge}</p>
+                            <p className='ml-2'>{selectedElement.specific_adaptive_challenge}</p>
                         </div>
                         <p className='text-xs text-gray-600'>{selectedElement.cognitive_mechanism_ref}</p>
                         <table>
                             <thead>
                                 <tr className='border'>
-                                    <th className='border' scope="col">Big Five</th>
-                                    <th className='border' scope="col">Age</th>
-                                    <th className='border' scope="col">Ecology</th>
-                                    <th className='border' scope="col">Sex</th>
+                                    <th className='border p-2' scope="col">Big Five</th>
+                                    <th className='border p-2' scope="col">Age</th>
+                                    <th className='border p-2' scope="col">Ecology</th>
+                                    <th className='border p-2' scope="col">Sex</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr className='border'>
-                                    <td className='text-sm text-center border' scope="row">
+                                    <td className='text-sm text-center flex flex-col gap-2 p-2 border' scope="row">
                                         <div className='flex flex-col'>
                                             <p>{selectedElement.bigfive_ope && selectedElement.bigfive_ope + ' openness to experience'}</p>
                                             <p className='text-xs text-gray-600'>{selectedElement.bigfive_ope_ref && '(' + selectedElement.bigfive_ope_ref + ')'}</p>
@@ -265,38 +269,38 @@ const PeriodicTable = () => {
                                             <p className='text-xs text-gray-600'>{selectedElement.bigfive_neu_ref && '(' + selectedElement.bigfive_neu_ref + ')'}</p>
                                         </div>
                                     </td>
-                                    <td className='text-sm text-center border'>
+                                    <td className='text-sm text-center border p-2'>
                                         <div className='flex flex-col'>
                                             <p>{selectedElement.age && selectedElement.age}</p>
                                             <p className='text-xs text-gray-600'>{selectedElement.age_ref && '(' + selectedElement.age_ref + ')'}</p>
                                         </div>
                                     </td>
-                                    <td className='text-sm text-center border'>
+                                    <td className='text-sm text-center border p-2'>
                                         <div className='flex flex-col'>
                                             <p>{selectedElement.ecology && selectedElement.ecology}</p>
                                             <p className='text-xs text-gray-600'>{selectedElement.ecology_ref && '(' + selectedElement.ecology_ref + ')'}</p>
                                         </div>
                                     </td>
-                                    <td className='text-sm text-center border'>
+                                    <td className='text-sm text-center border p-2'>
                                         <p>{selectedElement.ecology && selectedElement.sex}</p>
                                     </td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
-                    <div className='flex flex-col gap-4 bg-white rounded-md border-2 px-2 py-4'>
+                    <div className='flex flex-col gap-6 bg-white rounded-md border-2 px-4 py-6'>
                         <h3 className='text-xl' >Fiction</h3>
                         <p className=''>{selectedElement.summary_ingredient}</p>
-                        <div className='flex'>
+                        <div className='flex flex-col'>
                             <p className='font-bold'>Description of the ingredient :</p>
-                            <p>{selectedElement.description_ingredient}</p>
+                            <p className=''>{selectedElement.description_ingredient}</p>
                         </div>
-                        <div className='flex'>
+                        <div className='flex flex-col'>
                             <p className='font-bold'>Example of the ingredient :</p>
-                            <p>{selectedElement.example_ingredient}</p>
+                            <p className=''>{selectedElement.example_ingredient}</p>
                         </div>
                     </div>
-                    <div className='flex flex-col gap-4 bg-white rounded-md border-2 px-2 py-4'>
+                    <div className='flex flex-col gap-6 bg-white rounded-md border-2 px-4 py-6'>
                         <h3 className='text-xl' >Bibliography</h3>
                         {renderBibliography(selectedElement)}
                     </div>

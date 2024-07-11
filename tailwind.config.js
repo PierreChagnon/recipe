@@ -15,6 +15,14 @@ module.exports = {
       screens: {
         "3xl": "1800px",
       },
+      colors: {
+        'pastel-blue': '#9AB3CF',
+        'pastel-green': '#9CBDBD',
+        'pastel-brown': '#BDAA9C',
+        'pastel-purple': '#D3B1BC',
+        'pastel-pink': '#F5C8C3',
+        'pastel-orange': '#FBDCB7',
+      },
     },
   },
   plugins: [],

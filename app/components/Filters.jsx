@@ -51,12 +51,11 @@ export default function Filters({ handleFilter, handleResetFilters }) {
             if (!isActive) {
                 newState[filterCategory] = { filter, value };
             }
-
+            console.log('newState', newState);
             return newState;
         });
 
         handleFilter(filter, value);
-        console.log(activeChips);
     };
 
     return (
@@ -102,14 +101,14 @@ export default function Filters({ handleFilter, handleResetFilters }) {
                     </div>
                 </div>
             ))}
-            <div className={`flex items-start`} >
+            <div className={`flex flex-col items-center justify-between`} >
                 <button
                     disabled={Object.keys(activeChips).length === 0}
                     onClick={() => {
                         setActiveChips({});
                         handleResetFilters();
                     }}
-                    className='flex items-center disabled:bg-gray-100 disabled:text-gray-500 bg-white border border-gray-300 hover:bg-gray-200 shadow-sm duration-200 px-4 py-1 rounded-full text-xs gap-2'
+                    className='flex items-center disabled:bg-gray-100 disabled:border-gray-300 disabled:text-gray-400 bg-white border border-gray-300 hover:bg-gray-200 shadow-sm duration-200 px-4 py-1 rounded-full text-xs gap-2'
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"

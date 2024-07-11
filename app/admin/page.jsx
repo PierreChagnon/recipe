@@ -13,7 +13,7 @@ export default function Admin() {
 
     const handleUpload = async () => {
         try {
-            const storageRef = ref(storage, 'data')
+            const storageRef = ref(storage, 'data.csv')
             // uploadBytes met le fichier dans le storage
             const snapshot = await uploadBytes(storageRef, file)
             // console.log('Uploaded a blob or file!', snapshot)
@@ -52,7 +52,7 @@ export default function Admin() {
                 // Création du batch
                 const batch = writeBatch(db)
                 result.data.forEach((row) => {
-                    const docRef = doc(db, 'mechanisms', row.cognitive_mechanism)
+                    const docRef = doc(db, 'mechanisms', row.id)
                     batch.set(docRef, row)
                 })
 

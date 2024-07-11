@@ -10,6 +10,7 @@ const NavBar = () => {
                     <a href="#table" className="hover:bg-gray-200 duration-200 py-1 px-4 rounded-md">Table</a>
                     <Link href="#abstract" className="hover:bg-gray-200 duration-200 py-1 px-4 rounded-md">Abstract</Link>
                     <a href="#contributors" className="hover:bg-gray-200 duration-200 py-1 px-4 rounded-md">Contributors</a>
+                    <a href="#contact-form" className="hover:bg-gray-200 duration-200 py-1 px-4 rounded-md">Contact</a>
                 </div>
             </div>
         </nav>
