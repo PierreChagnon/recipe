@@ -1,6 +1,6 @@
 import nodemailer from 'nodemailer';
 
-export default async function handler(req, res) {
+export default function handler(req, res) {
     if (req.method === 'POST') {
         const { name, email, subject, message } = req.body;
 
@@ -24,12 +24,15 @@ export default async function handler(req, res) {
             `,
         };
 
-        try {
-            await transporter.sendMail(mailOptions);
-            res.status(200).json({ message: 'Message sent successfully' });
-        } catch (error) {
-            res.status(500).json({ message: 'Failed to send message', error: error.message });
-        }
+        const sendMail = async () => {
+            try {
+                await transporter.sendMail(mailOptions);
+                res.status(200).json({ message: 'Message sent successfully' });
+            } catch (error) {
+                res.status(500).json({ message: 'Failed to send message', error: error.message });
+            }
+        };
+        sendMail();
     } else {
         res.status(405).json({ message: 'Method not allowed' });
     }

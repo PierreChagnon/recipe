@@ -14,6 +14,7 @@ module.exports = {
       },
       screens: {
         "3xl": "1800px",
+        "4xl": "2200px",
       },
       colors: {
         'pastel-blue': '#9AB3CF',

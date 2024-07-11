@@ -37,8 +37,8 @@ const ContactForm = () => {
     return (
         <div id='contact-form' className="flex flex-col w-full items-center pt-32 pb-32 border-t border-gray-300">
             <h2 className='text-4xl mb-16'>Contact us</h2>
-            <form onSubmit={handleSubmit} className='flex flex-col items-center'>
-                <div className="mb-4 flex gap-2">
+            <form onSubmit={handleSubmit} className='flex flex-col w-full items-center px-24 xl:px-36 2xl:px-48 3xl:px-56'>
+                <div className="mb-4 flex gap-2 w-full">
                     <input
                         placeholder='Name'
                         type="text"
