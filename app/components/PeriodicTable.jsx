@@ -160,7 +160,7 @@ const PeriodicTable = () => {
     // }
 
     const handleFilter = (filterCategory = 'default', filter, value) => {
-        console.log('filter:', filter, value);
+        // console.log('filter:', filter, value);
 
         let newFiltersArray = filtersArrayRef.current.filter((element) => {
             if (element.filter === filter) {
@@ -201,7 +201,7 @@ const PeriodicTable = () => {
         }
 
         filtersArrayRef.current = newFiltersArray;
-        console.log('Updated filtersArrayRef.current:', filtersArrayRef.current);
+        // console.log('Updated filtersArrayRef.current:', filtersArrayRef.current);
 
         if (filtersArrayRef.current.length === 0) {
             setElementsFiltered(mechanisms);
@@ -218,8 +218,8 @@ const PeriodicTable = () => {
         });
 
         setElementsFiltered(temp);
-        console.log('filtersArrayRef.current :', filtersArrayRef.current);
-        console.log('temp :', temp);
+        // console.log('filtersArrayRef.current :', filtersArrayRef.current);
+        // console.log('temp :', temp);
     };
 
 
