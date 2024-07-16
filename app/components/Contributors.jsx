@@ -20,7 +20,7 @@ const Contributors = () => {
                     <Link href={contributor.website} target='_blank' key={contributor.name} className='flex flex-col w-1/4 border-gray-300 bg-white border text-sm cursor-pointer p-4 rounded-lg gap-6 shadow-sm hover:shadow-md duration-200'>
                         <div className='flex items-center gap-3'>
                             <div className={`w-12 h-12 3xl:w-14 3xl:h-14 rounded-full overflow-hidden relative ${bgColors[index]}`}>
-                                <Image src={contributor.imageUrl} alt={contributor.name} layout="fill" className='object-cover' />
+                                <Image src={contributor.imageUrl} alt={contributor.name} fill className='object-cover' sizes="100px" />
                             </div>
                             <p className='3xl:text-lg'>{contributor.name}</p>
                         </div>
