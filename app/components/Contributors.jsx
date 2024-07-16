@@ -1,41 +1,31 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { contributorsArray } from '@/lib/contributors';
 import Link from 'next/link';
+import Image from 'next/image';
 
 const Contributors = () => {
-    const contributors = Array(50).fill().map((_, index) => ({
-        id: index + 1,
-        name: `Contributor ${index + 1}`,
-    }));
+    const [bgColors, setBgColors] = useState([]);
 
-    const contributorsWithColor = contributors.map(contributor => ({
-        id: contributor.id,
-        color: getRandomBgColor(),
-        name: generateRandomName(),
-    }));
-
-    function getRandomBgColor() {
+    useEffect(() => {
         const colors = ['bg-red-200', 'bg-blue-200', 'bg-green-200', 'bg-yellow-200', 'bg-orange-200', 'bg-purple-200'];
-        return colors[Math.floor(Math.random() * colors.length)];
-    }
+        const newBgColors = contributorsArray.map(() => colors[Math.floor(Math.random() * colors.length)]);
+        setBgColors(newBgColors);
+    }, []);
 
-    function generateRandomName() {
-        const names = ['John', 'Jane', 'Michael', 'Emily', 'David', 'Olivia', 'Daniel', 'Sophia', 'Matthew', 'Emma'];
-        const surnames = ['Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Garcia', 'Miller', 'Davis', 'Rodriguez', 'Martinez'];
-        const randomName = names[Math.floor(Math.random() * names.length)];
-        const randomSurname = surnames[Math.floor(Math.random() * surnames.length)];
-        return `${randomName} ${randomSurname}`;
-    }
     return (
         <section id='contributors' className='flex flex-col gap-16 items-center pt-32 border-t border-gray-300'>
             <h2 className='text-4xl'>Contributors</h2>
             <div className='flex flex-wrap justify-center gap-2'>
-                {contributorsArray.map(contributor => (
+                {contributorsArray.map((contributor, index) => (
                     <Link href={contributor.website} target='_blank' key={contributor.name} className='flex flex-col w-1/4 border-gray-300 bg-white border text-sm cursor-pointer p-4 rounded-lg gap-6 shadow-sm hover:shadow-md duration-200'>
-                        <div className={`w-8 h-8 rounded-full ${getRandomBgColor()}`}></div>
+                        <div className='flex items-center gap-3'>
+                            <div className={`w-12 h-12 3xl:w-14 3xl:h-14 rounded-full overflow-hidden relative ${bgColors[index]}`}>
+                                <Image src={contributor.imageUrl} alt={contributor.name} layout="fill" className='object-cover' />
+                            </div>
+                            <p className='3xl:text-lg'>{contributor.name}</p>
+                        </div>
                         <div className='flex flex-col'>
-                            <p className='text-nowrap'>{contributor.name}</p>
-                            <p className='text-xs text-gray-400'>{contributor.institution}</p>
+                            <p className='text-xs 3xl:text-sm text-gray-400'>{contributor.institution}</p>
                         </div>
                     </Link>
                 ))}
