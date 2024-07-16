@@ -14,6 +14,36 @@ const PeriodicTable = () => {
     const panelRef = useRef(null);
     const filtersArrayRef = useRef([]);
 
+    // useffect pour vérifier que le tableau est bien a jour
+    // lorsque tous les filtres sont retirés (préviens un bug lorsqu'on retire tous les filtres manuellement)
+    // useEffect(() => {
+    //     if (filtersArrayRef.current.length === 0) {
+    //         setElementsFiltered(mechanisms);
+    //     }
+    // }, [elementsFiltered, mechanisms]);
+
+    useEffect(() => {
+        const applyFilters = () => {
+            if (filtersArrayRef.current.length === 0) {
+                setElementsFiltered(mechanisms);
+                return;
+            }
+
+            const filteredElements = mechanisms.filter((element) => {
+                return filtersArrayRef.current.every((f) => {
+                    if (Array.isArray(f.value)) {
+                        return f.value.includes(element[f.filter]);
+                    }
+                    return element[f.filter] === f.value;
+                });
+            });
+
+            setElementsFiltered(filteredElements);
+        };
+
+        applyFilters();
+    }, [filtersArrayRef.current, mechanisms]);
+
     useEffect(() => {
         const fetchMechanisms = async () => {
             const mechanismsCollection = collection(db, 'mechanisms');
@@ -83,23 +113,95 @@ const PeriodicTable = () => {
     };
 
 
-    const handleFilter = (filter, value) => {
-        // console.log('filter:', filter, value);
+    // const handleFilter = (filterCategroy = 'default', filter, value) => {
+    //     console.log('filter:', filter, value);
 
-        const newFiltersArray = filtersArrayRef.current.filter((element) => element.filter !== filter);
+    //     const newFiltersArray = filtersArrayRef.current.filter((element) => element.filter !== filter);
+    //     console.log('newFiltersArray:', newFiltersArray);
 
+    //     const existingElement = filtersArrayRef.current.find((element) => element.filter === filter);
+    //     console.log('existingElement:', existingElement);
+
+    //     if (!existingElement) {
+    //         // console.log("Le filtre n'existe pas, on l'ajoute");
+    //         newFiltersArray.push({ filter, value });
+    //     } else if (existingElement.value !== value) {
+
+    //         // cas de age, on peut ajouter plusieurs valeurs différentes
+    //         if (filterCategroy === 'Developmental period') {
+    //             newFiltersArray.push({ filter, value });
+    //             newFiltersArray.push(existingElement);
+    //         } else {
+    //             // console.log("Le filtre existe déjà, mais la valeur est différente");
+    //             newFiltersArray.push({ filter, value });
+    //         }
+    //     }
+
+    //     filtersArrayRef.current = newFiltersArray;
+    //     console.log('Updated filtersArrayRef.current:', filtersArrayRef.current);
+
+    //     if (filtersArrayRef.current.length === 0) {
+    //         setElementsFiltered(mechanisms);
+    //         return;
+    //     }
+
+    //     const temp = mechanisms.filter((element) => {
+    //         // utilisation de every plutôt que forEach car elle retourne un booléen
+    //         // ne pas oublier le return avant le every, afin de retourner le booléen
+    //         return filtersArrayRef.current.every((f) => {
+    //             return element[f.filter] === f.value;
+    //         })
+    //     }
+    //     );
+
+    //     setElementsFiltered(temp);
+    //     // console.log('filtersArrayRef.current :', filtersArrayRef.current)
+    //     // console.log('temp :', temp)
+    // }
+
+    const handleFilter = (filterCategory = 'default', filter, value) => {
+        console.log('filter:', filter, value);
+
+        let newFiltersArray = filtersArrayRef.current.filter((element) => {
+            if (element.filter === filter) {
+                if (filterCategory === 'Developmental period') {
+                    // Handle multi-selection for age
+                    if (Array.isArray(element.value) && element.value.includes(value)) {
+                        element.value = element.value.filter(v => v !== value);
+                        if (element.value.length === 0) {
+                            return false; // Remove the filter if no values are left
+                        }
+                        return true; // Keep the filter with updated values
+                    } else {
+                        if (!Array.isArray(element.value)) {
+                            element.value = [element.value]; // Convert to array if not already
+                        }
+                        element.value.push(value);
+                        return true; // Keep the filter with updated values
+                    }
+                } else {
+                    return false; // Remove the filter for non-age categories
+                }
+            }
+            return true; // Keep the filter
+        });
+
+        // Add new filter if not already present
         const existingElement = filtersArrayRef.current.find((element) => element.filter === filter);
-
         if (!existingElement) {
-            // console.log("Le filtre n'existe pas, on l'ajoute");
-            newFiltersArray.push({ filter, value });
-        } else if (existingElement.value !== value) {
-            // console.log("Le filtre existe déjà, mais la valeur est différente");
+            if (filterCategory === 'Developmental period') {
+                newFiltersArray.push({ filter, value: [value] }); // Initialize with array for multiple selections
+            } else {
+                newFiltersArray.push({ filter, value });
+            }
+        } else if (existingElement.value !== value && filterCategory !== 'Developmental period') {
+            // Handle single-selection for non-age categories
+            newFiltersArray = newFiltersArray.filter((element) => element.filter !== filter);
             newFiltersArray.push({ filter, value });
         }
 
         filtersArrayRef.current = newFiltersArray;
-        // console.log('Updated filtersArrayRef.current:', filtersArrayRef.current);
+        console.log('Updated filtersArrayRef.current:', filtersArrayRef.current);
 
         if (filtersArrayRef.current.length === 0) {
             setElementsFiltered(mechanisms);
@@ -107,18 +209,30 @@ const PeriodicTable = () => {
         }
 
         const temp = mechanisms.filter((element) => {
-            // utilisation de every plutôt que forEach car elle retourne un booléen
-            // ne pas oublier le return avant le every, afin de retourner le booléen
             return filtersArrayRef.current.every((f) => {
+                if (Array.isArray(f.value)) {
+                    return f.value.includes(element[f.filter]);
+                }
                 return element[f.filter] === f.value;
-            })
-        }
-        );
+            });
+        });
 
         setElementsFiltered(temp);
-        // console.log('filtersArrayRef.current :', filtersArrayRef.current)
-        // console.log('temp :', temp)
-    }
+        console.log('filtersArrayRef.current :', filtersArrayRef.current);
+        console.log('temp :', temp);
+    };
+
+
+
+
+
+
+
+
+
+
+
+
 
     const getColorByElementGeneralAdaptiveChallenge = (challenge) => {
         switch (challenge) {
@@ -283,6 +397,7 @@ const PeriodicTable = () => {
                                     </td>
                                     <td className='text-sm text-center border p-2'>
                                         <p>{selectedElement.ecology && selectedElement.sex}</p>
+                                        <p className='text-xs text-gray-600'>{selectedElement?.sex_ref && '(' + selectedElement?.sex_ref + ')'}</p>
                                     </td>
                                 </tr>
                             </tbody>

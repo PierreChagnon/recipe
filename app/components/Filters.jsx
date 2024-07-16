@@ -1,29 +1,29 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 const filtersArray = [
     {
         title: 'Personality traits',
-        title_ref: ['bigfive_ope', 'bigfive_con', 'bigfive_ext', 'bigfive_agr', 'bigfive_neu'], // référence à la base de données (le nom de la colonne)
+        title_ref: ['bigfive_ope', 'bigfive_con', 'bigfive_ext', 'bigfive_agr', 'bigfive_neu'],
         values: ['Openness', 'Conscientiousness', 'Extraversion', 'Agreeableness', 'Neuroticism'],
         values_ref: ['low', 'high'],
     },
     {
         title: 'Developmental period',
-        title_ref: 'age', // référence à la base de données (le nom de la colonne)
+        title_ref: 'age',
         values: ['Children', 'Adolescents', 'Adult'],
-        values_ref: ['children', 'adolescence', 'adult'], // référence aux valeurs possibles de la base de données
+        values_ref: ['children', 'adolescence', 'adult'],
     },
     {
         title: 'Ecological conditions',
-        title_ref: 'ecology', // référence à la base de données (le nom de la colonne)
+        title_ref: 'ecology',
         values: ['Harsh', 'Affluent'],
-        values_ref: ['harsh', 'affluent'], // référence aux valeurs possibles de la base de données
+        values_ref: ['harsh', 'affluent'],
     },
     {
         title: 'Gender',
-        title_ref: 'sex', // référence à la base de données (le nom de la colonne)
+        title_ref: 'sex',
         values: ['Male', 'Female'],
-        values_ref: ['male', 'female'], // référence aux valeurs possibles de la base de données
+        values_ref: ['male', 'female'],
     },
 ];
 
@@ -41,21 +41,42 @@ const Chip = ({ children, filter, value, handleFilter, isActive, filterCategory 
 export default function Filters({ handleFilter, handleResetFilters }) {
     const [activeChips, setActiveChips] = useState({});
 
+    useEffect(() => {
+        if (Object.keys(activeChips).length === 0) {
+            handleResetFilters();
+        }
+    }, [activeChips, handleResetFilters]);
+
     const handleChipClick = (filterCategory, filter, value) => {
         setActiveChips((prevState) => {
-            const isActive = prevState[filterCategory]?.filter === filter && prevState[filterCategory]?.value === value;
+            if (filterCategory === 'Developmental period') {
+                if (prevState[filterCategory]?.value.includes(value)) {
+                    const newState = { ...prevState, [filterCategory]: { filter, value: prevState[filterCategory].value.filter((v) => v !== value) } };
+                    if (newState[filterCategory].value.length === 0) {
+                        delete newState[filterCategory];
+                    }
+                    return newState;
+                }
 
-            // Utiliser la déstructuration pour omettre la propriété
+                return {
+                    ...prevState,
+                    [filterCategory]: {
+                        filter,
+                        value: prevState[filterCategory] ? [...prevState[filterCategory].value, value] : [value],
+                    },
+                };
+            }
+
+            const isActive = prevState[filterCategory]?.filter === filter && prevState[filterCategory]?.value === value;
             const { [filterCategory]: omitted, ...newState } = prevState;
 
             if (!isActive) {
                 newState[filterCategory] = { filter, value };
             }
-            console.log('newState', newState);
             return newState;
         });
 
-        handleFilter(filter, value);
+        handleFilter(filterCategory, filter, value);
     };
 
     return (
@@ -64,7 +85,21 @@ export default function Filters({ handleFilter, handleResetFilters }) {
                 <div key={index} className='flex flex-col items-center gap-3 2xl:gap-4'>
                     <p>{filterGroup.title}</p>
                     <div className='flex flex-col gap-1'>
-                        {filterGroup.title !== 'Personality traits' ?
+                        {filterGroup.title === 'Developmental period' &&
+                            filterGroup.values.map((value, i) => (
+                                <Chip
+                                    key={value}
+                                    handleFilter={() => handleChipClick(filterGroup.title, filterGroup.title_ref, filterGroup.values_ref[i])}
+                                    filterCategory={filterGroup.title}
+                                    filter={filterGroup.title_ref}
+                                    value={filterGroup.values_ref[i]}
+                                    isActive={activeChips[filterGroup.title]?.value.includes(filterGroup.values_ref[i])}
+                                >
+                                    {value}
+                                </Chip>
+                            ))}
+
+                        {filterGroup.title !== 'Personality traits' && filterGroup.title !== 'Developmental period' ?
                             filterGroup.values.map((value, i) => (
                                 <Chip
                                     key={i}
@@ -78,6 +113,7 @@ export default function Filters({ handleFilter, handleResetFilters }) {
                                 </Chip>
                             ))
                             :
+                            filterGroup.title === 'Personality traits' &&
                             filterGroup.values.map((trait, j) => (
                                 <div className='flex justify-between' key={trait}>
                                     <p className='text-sm'>{trait}</p>
