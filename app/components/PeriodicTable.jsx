@@ -310,7 +310,7 @@ const PeriodicTable = () => {
                         onClick={() => handleElementClick(element)}
                     >
                         <p className="text-center text-sm font-bold">{element.cognitive_mechanism}</p>
-                        <p className="text-xs truncate">{element.specific_adaptive_challenge}</p>
+                        <p className="text-xs text-center">{element.specific_adaptive_challenge}</p>
                     </div>
                 ))}
             </div>
