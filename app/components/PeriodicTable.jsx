@@ -219,7 +219,7 @@ const PeriodicTable = () => {
 
             {isLoading ? (
                 <div className="flex justify-center items-center h-40">
-                    <p>Chargement des données...</p>
+                    <p>Loading...</p>
                 </div>
             ) : (
                 <div className="grid grid-cols-5 gap-2 mt-8 rounded-lg">
