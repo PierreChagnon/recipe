@@ -17,7 +17,7 @@ export default function Admin() {
             // uploadBytes met le fichier dans le storage
             const snapshot = await uploadBytes(storageRef, file)
             // console.log('Uploaded a blob or file!', snapshot)
-            
+
             // process CSV se charge de mettre a jour la base de données firestore avec le nouveau fichier
             await processCSV(file)
         } catch (error) {
@@ -26,7 +26,7 @@ export default function Admin() {
     }
 
     const clearCollection = async () => {
-        // console.log('Clearing collection')
+        console.log('Clearing collection')
         const querySnapshot = await getDocs(collection(db, "mechanisms"));
         // console.log('querySnapshot', querySnapshot)
 
@@ -37,42 +37,47 @@ export default function Admin() {
         });
 
         await batch.commit();
+        console.log('Collection cleared')
     }
 
 
     const processCSV = async (file) => {
+        console.log('Processing CSV', file);
+
         Papa.parse(file, {
             header: true,
             complete: async (result) => {
-                // console.log('Parsed CSV', result)
+                await clearCollection();
 
-                // Suppression des données existantes
-                await clearCollection()
+                const batch = writeBatch(db);
 
-                // Création du batch
-                const batch = writeBatch(db)
                 result.data.forEach((row) => {
-                    const docRef = doc(db, 'mechanisms', row.id)
-                    batch.set(docRef, row)
-                })
+                    const id = row.id?.trim();
 
-                //commit du batch
+                    // Ignorer les lignes sans ID ou vides
+                    if (!id) return;
+
+                    const cleanedRow = { ...row, id };
+                    const docRef = doc(db, 'mechanisms', id);
+                    batch.set(docRef, cleanedRow);
+                });
+
                 try {
                     await batch.commit();
                     alert('CSV data has been processed and the website is now up to date.');
-                    setIsLogged(false) // logout
-                    setPassword('') // reset password
-                    setFile(null) // reset file
+                    setIsLogged(false);
+                    setPassword('');
+                    setFile(null);
                 } catch (error) {
                     console.error('Error updating Firestore:', error);
                 }
-
             },
             error: (error) => {
-                console.error('Error parsing CSV', error)
+                console.error('Error parsing CSV', error);
             }
-        })
-    }
+        });
+    };
+
 
 
     return (

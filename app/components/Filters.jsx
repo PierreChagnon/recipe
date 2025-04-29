@@ -10,7 +10,7 @@ const filtersArray = [
     {
         title: 'Developmental period',
         title_ref: 'age',
-        values: ['Children', 'Adolescents', 'Adult'],
+        values: ['Children', 'Adolescents', 'Adults'],
         values_ref: ['children', 'adolescence', 'adult'],
     },
     {

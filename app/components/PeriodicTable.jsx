@@ -324,7 +324,7 @@ const PeriodicTable = () => {
 
 
             {selectedElement && (
-                <div ref={panelRef} className="fixed rounded-md border border-gray-300 bg-transparent backdrop-blur-3xl left-2 top-2 bottom-2 xl:left-2 xl:top-4 xl:bottom-4 w-[40%] px-4 py-12 2xl:px-10 3xl:px-16 gap-16 flex flex-col shadow-lg overflow-y-scroll">
+                <div ref={panelRef} className="fixed rounded-md border border-gray-300 bg-transparent backdrop-blur-3xl left-2 top-2 bottom-2 xl:left-2 xl:top-4 xl:bottom-4 w-[40%] px-4 py-12 2xl:px-10 3xl:px-16 gap-16 flex flex-col shadow-lg overflow-y-scroll z-10">
 
                     <button
                         className="absolute top-2 right-2 text-gray-500 hover:text-gray-700 border-2 border-gray-400 rounded-full p-1 transition duration-200"
