@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import { GoDownload } from "react-icons/go";
-import { ref, getDownloadURL } from "firebase/storage";
-import { storage } from '@/firebase/firebase'
+import { downloadCSV } from '../actions/downloadCSV';
 
 
 export default function DownloadButton() {
@@ -12,8 +11,7 @@ export default function DownloadButton() {
         setLoading(true);
         setError(null);
         try {
-            const fileRef = ref(storage, 'data.csv');
-            const url = await getDownloadURL(fileRef);
+            const url = await downloadCSV();
             const link = document.createElement('a');
             link.href = url;
             link.setAttribute('download', 'file.csv');
