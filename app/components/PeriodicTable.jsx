@@ -227,7 +227,7 @@ const PeriodicTable = () => {
                         elementsFiltered.map((element) => (
                             <div
                                 key={element.id}
-                                className={`flex flex-col items-center gap-2 justify-center p-4 rounded-lg cursor-pointer shadow-sm hover:shadow-md hover:scale-105 duration-200 ${getColorByElementGeneralAdaptiveChallenge(element.general_adaptive_challenge)}`}
+                                className={`flex flex-col items-center gap-2 justify-center h-28 p-4 rounded-lg cursor-pointer shadow-sm hover:shadow-md hover:scale-105 duration-200 ${getColorByElementGeneralAdaptiveChallenge(element.general_adaptive_challenge)}`}
                                 onClick={() => handleElementClick(element)}
                             >
                                 <p className="text-center text-sm font-bold">{element.cognitive_mechanism}</p>
